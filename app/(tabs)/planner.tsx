@@ -8,7 +8,7 @@ const Planner = () => {
     <View className="flex-1 justify-center items-center bg-background">
       <Link href={"/workout"}>
         <Text className="text-primary text-3xl font-semibold">
-          <Ionicons size={30} color={"#E7AD48"} name="add-outline" />
+          <Ionicons size={30} name="add-outline" />
           Start workout
         </Text>
       </Link>

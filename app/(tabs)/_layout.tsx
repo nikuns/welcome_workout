@@ -16,7 +16,7 @@ const _Layout = () => {
         name="index"
         options={{
           title: "Home",
-          headerShown: false,
+          headerShown: true,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="home-outline" size={size} color={color} />
           ),
@@ -27,17 +27,17 @@ const _Layout = () => {
         name="planner"
         options={{
           title: "Workout",
-          headerShown: false,
+          headerShown: true,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="barbell-outline" size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="exercises"
+        name="exercises/exercises"
         options={{
           title: "Exercises",
-          headerShown: false,
+          headerShown: true,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="document-text-outline" size={size} color={color} />
           ),
@@ -48,7 +48,7 @@ const _Layout = () => {
         name="profile"
         options={{
           title: "Profile",
-          headerShown: false,
+          headerShown: true,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="person-outline" size={size} color={color} />
           ),
