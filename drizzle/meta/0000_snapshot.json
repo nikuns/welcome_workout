@@ -1,11 +1,11 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "121a57a1-5d1b-4017-b38f-df4bdf764be9",
+  "id": "769f0536-f86f-4150-88bf-b55bd7a1530f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
-    "exercises": {
-      "name": "exercises",
+    "exercise": {
+      "name": "exercise",
       "columns": {
         "id": {
           "name": "id",
@@ -21,8 +21,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "note": {
-          "name": "note",
+        "description": {
+          "name": "description",
           "type": "text",
           "primaryKey": false,
           "notNull": false,

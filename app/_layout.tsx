@@ -4,7 +4,8 @@ import { migrate } from "drizzle-orm/expo-sqlite/migrator";
 import { Stack } from "expo-router";
 import { SQLiteProvider } from "expo-sqlite";
 import "./globals.css";
-import { exercises } from "../db/schema.ts";
+import { exercise } from "@/db/schema.ts";
+import { seedExercise } from "@/db/seedExercise.ts";
 export const DATABASE_NAME = "WWdb.db";
 
 export default function RootLayout() {
@@ -17,13 +18,7 @@ export default function RootLayout() {
           const db = drizzle(database);
           await migrate(db, migrations);
 
-          //for test below
-          await db.delete(exercises);
-          await db.insert(exercises).values([
-            { name: "klatowa", note: "lezysz i podnosisz" },
-            { name: "siady", note: "kucasz" },
-          ]);
-
+          await seedExercise(DATABASE_NAME);
           console.log("Migration success");
         } catch (error) {
           console.error("Migration error", error);

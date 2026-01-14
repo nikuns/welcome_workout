@@ -1,39 +1,48 @@
 import * as schema from "@/db/schema";
-import { exercises } from "@/db/schema";
+import { exercise } from "@/db/schema";
 import { drizzle, useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { useSQLiteContext } from "expo-sqlite";
-import { Button, Text, TextInput, View } from "react-native";
+import { useState } from "react";
+import { FlatList, Text, TextInput, View } from "react-native";
+import SearchBar from "@/components/SearchBar";
+
+type ExerciseItemProps = {
+  exercise: typeof exercise.$inferSelect;
+};
+
+function ExerciseItem({ exercise }: ExerciseItemProps) {
+  return (
+    <View>
+      <Text className="text-3xl font-bold text-secondary">{exercise.name}</Text>
+      <Text className="text-secondary">{exercise.description}</Text>
+    </View>
+  );
+}
 
 export default function Index() {
-  //const [data, setData] = useState<Exercise[]>([]);
-
   const db = useSQLiteContext();
   const drizzleDB = drizzle(db, { schema });
-  const { data } = useLiveQuery(drizzleDB.select().from(exercises));
+  const { data: exercises = [] } = useLiveQuery(
+    drizzleDB.select().from(exercise),
+  );
 
-  const addexercise = async () => {
-    try {
-      await drizzleDB.insert(exercises).values({
-        name: "klatowa",
-        note: "nakurwiaj",
-      });
-      console.log("klatowe dodano");
-    } catch (error) {
-      console.error("error adding klatowa", error);
-    }
-  };
+  const [search, setSearch] = useState("");
+
+  const filteredExercises = exercises.filter(
+    (item) =>
+      item.name.toLowerCase().includes(search.toLowerCase()) ||
+      item.description.toLowerCase().includes(search.toLowerCase()),
+  );
   return (
-    <View
-      style={{
-        flex: 1,
-      }}
-    >
-      {data?.map((exercises) => (
-        <View key={exercises.id}>
-          <Text>{exercises.name}</Text>
-          <Text>{exercises.note}</Text>
-        </View>
-      ))}
+    <View className="bg-background flex-1">
+      <SearchBar value={search} onChangeText={setSearch} />
+
+      <FlatList
+        className="bg-background"
+        data={filteredExercises}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => <ExerciseItem exercise={item} />}
+      />
     </View>
   );
 }

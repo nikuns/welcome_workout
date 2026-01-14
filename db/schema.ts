@@ -1,4 +1,3 @@
-//import * as SQLite from "expo-sqlite";
 import {
   sqliteTable,
   text,
@@ -6,10 +5,10 @@ import {
   SQLiteTable,
 } from "drizzle-orm/sqlite-core";
 
-export const exercises = sqliteTable("exercises", {
+export const exercise = sqliteTable("exercise", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   name: text("name").notNull(),
-  note: text("note"),
+  description: text("description"),
 });
 
-export const Exercise = typeof exercises.$inferSelect;
+export const Exercise = typeof exercise.$inferSelect;
