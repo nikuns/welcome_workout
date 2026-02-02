@@ -1,10 +1,16 @@
-import * as schema from "@/db/schema";
 import { exercise } from "@/db/schema";
-import { drizzle, useLiveQuery } from "drizzle-orm/expo-sqlite";
-import { useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";
-import { FlatList, Text, TextInput, View } from "react-native";
+import {
+  Button,
+  FlatList,
+  Pressable,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import SearchBar from "@/components/SearchBar";
+import useExercises from "@/hooks/useExercise";
+import { Link } from "expo-router";
 
 type ExerciseItemProps = {
   exercise: typeof exercise.$inferSelect;
@@ -20,11 +26,7 @@ function ExerciseItem({ exercise }: ExerciseItemProps) {
 }
 
 export default function Index() {
-  const db = useSQLiteContext();
-  const drizzleDB = drizzle(db, { schema });
-  const { data: exercises = [] } = useLiveQuery(
-    drizzleDB.select().from(exercise),
-  );
+  const { exercises } = useExercises();
 
   const [search, setSearch] = useState("");
 
@@ -37,11 +39,21 @@ export default function Index() {
     <View className="bg-background flex-1">
       <SearchBar value={search} onChangeText={setSearch} />
 
+      <Link href="/exercises/newExercise" push asChild>
+        <Button title="Create new exercise" />
+      </Link>
+
       <FlatList
         className="bg-background"
         data={filteredExercises}
         keyExtractor={(item) => item.id.toString()}
-        renderItem={({ item }) => <ExerciseItem exercise={item} />}
+        renderItem={({ item }) => (
+          <Link href={`/exercises/${item.id}`} asChild>
+            <Pressable>
+              <ExerciseItem exercise={item} />
+            </Pressable>
+          </Link>
+        )}
       />
     </View>
   );

@@ -1,11 +1,11 @@
-import migrations from "../drizzle/migrations.js";
+import { seedExercise } from "@/db/seedExercise";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { migrate } from "drizzle-orm/expo-sqlite/migrator";
 import { Stack } from "expo-router";
 import { SQLiteProvider } from "expo-sqlite";
+import migrations from "../drizzle/migrations";
 import "./globals.css";
-import { exercise } from "@/db/schema.ts";
-import { seedExercise } from "@/db/seedExercise.ts";
+import { DrizzleProvider } from "@/db/drizzleProvider";
 export const DATABASE_NAME = "WWdb.db";
 
 export default function RootLayout() {
@@ -17,17 +17,19 @@ export default function RootLayout() {
         try {
           const db = drizzle(database);
           await migrate(db, migrations);
-
           await seedExercise(DATABASE_NAME);
+
           console.log("Migration success");
         } catch (error) {
           console.error("Migration error", error);
         }
       }}
     >
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
+      <DrizzleProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+      </DrizzleProvider>
     </SQLiteProvider>
   );
 }

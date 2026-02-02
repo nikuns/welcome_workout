@@ -11,4 +11,5 @@ export const exercise = sqliteTable("exercise", {
   description: text("description"),
 });
 
-export const Exercise = typeof exercise.$inferSelect;
+export type Exercise = typeof exercise.$inferSelect;
+export type newExercise = typeof exercise.$inferInsert;

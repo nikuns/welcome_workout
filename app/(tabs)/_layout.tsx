@@ -34,10 +34,10 @@ const _Layout = () => {
         }}
       />
       <Tabs.Screen
-        name="exercises/exercises"
+        name="exercises"
         options={{
           title: "Exercises",
-          headerShown: true,
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="document-text-outline" size={size} color={color} />
           ),
