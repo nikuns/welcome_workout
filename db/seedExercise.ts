@@ -1,6 +1,6 @@
 import * as SQLite from "expo-sqlite";
 import { drizzle } from "drizzle-orm/expo-sqlite";
-import { exercise } from "./schema";
+import { exercise, workout_template } from "./schema";
 
 //const db = drizzle(SQLite.openDatabaseAsync("WWdb.db"));
 
@@ -49,5 +49,19 @@ export const seedExercise = async (dbName: string) => {
     ]);
   } catch (error) {
     console.error("error during seeding");
+  }
+  try {
+    const existingWorkoutSeed = await db.select().from(workout_template);
+    if (existingWorkoutSeed.length > 0) {
+      return;
+    }
+    await db.insert(workout_template).values([
+      {
+        name: "Testowy workout",
+        description: "Testowy workout_template description",
+      },
+    ]);
+  } catch (e) {
+    console.error("error during workout seeding");
   }
 };

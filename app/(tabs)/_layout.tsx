@@ -24,10 +24,10 @@ const _Layout = () => {
       />
 
       <Tabs.Screen
-        name="planner"
+        name="workout"
         options={{
-          title: "Workout",
-          headerShown: true,
+          title: "Workouts",
+          headerShown: false,
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="barbell-outline" size={size} color={color} />
           ),
