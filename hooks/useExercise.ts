@@ -13,6 +13,7 @@ export default function useExercises() {
 
     useExerciseById: repo.useExerciseById,
     createExercise: repo.createExercise,
+    updateExercise: repo.updateExercise,
     deleteExercise: repo.deleteExercise,
   };
 }

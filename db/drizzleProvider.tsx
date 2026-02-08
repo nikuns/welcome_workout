@@ -6,9 +6,9 @@ import {
 } from "react";
 import { useSQLiteContext } from "expo-sqlite";
 import { drizzle, type ExpoSQLiteDatabase } from "drizzle-orm/expo-sqlite";
-import * as schema from "./schema";
+import * as appSchema from "@/db/schema";
 
-type DB = ExpoSQLiteDatabase<typeof schema>;
+type DB = ExpoSQLiteDatabase<typeof appSchema>;
 
 const DrizzleContext = createContext<DB | null>(null);
 
@@ -16,7 +16,7 @@ export function DrizzleProvider({ children }: PropsWithChildren) {
   const sqlite = useSQLiteContext(); // pobiera surową bazę z SQLiteProvider
 
   const db = useMemo(() => {
-    return drizzle(sqlite, { schema });
+    return drizzle(sqlite, { schema: appSchema });
   }, [sqlite]);
 
   return (

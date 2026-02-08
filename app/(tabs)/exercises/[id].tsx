@@ -4,7 +4,7 @@ import { View, Text, Alert, Button } from "react-native";
 
 export default function ExerciseDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { useExerciseById, deleteExercise } = useExercises();
+  const { useExerciseById, deleteExercise, updateExercise } = useExercises();
 
   const handleDelete = () => {
     try {
@@ -28,9 +28,15 @@ export default function ExerciseDetail() {
     ]);
   };
 
+  const handleUpdate = () => {
+    updateExercise(Number(id), {
+      name: "updated",
+      description: "updated desc",
+    });
+  };
   const { data: exercise, error } = useExerciseById(Number(id));
   if (!exercise) {
-    return null; // lub <Text>Nie znaleziono</Text> – nie crashuje
+    return null;
   }
   if (error) return <Text>{error.message}</Text>;
   return (

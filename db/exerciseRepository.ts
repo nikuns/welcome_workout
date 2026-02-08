@@ -2,6 +2,7 @@ import { ExpoSQLiteDatabase, useLiveQuery } from "drizzle-orm/expo-sqlite";
 import { exercise, Exercise, newExercise } from "./schema";
 import { eq } from "drizzle-orm";
 
+import * as appSchema from "@/db/schema";
 type DB = ExpoSQLiteDatabase<{ exercise: typeof exercise }>;
 
 export const createExerciseRepository = (db: DB) => {
@@ -26,8 +27,19 @@ export const createExerciseRepository = (db: DB) => {
       return inserted;
     },
 
-    async deleteExercise(id: number): Promise<Void> {
+    async deleteExercise(id: number): Promise<void> {
       await db.delete(exercise).where(eq(exercise.id, id));
+    },
+
+    async updateExercise(
+      id: number,
+      data: Partial<newExercise>,
+    ): Promise<Exercise> {
+      return await db
+        .update(exercise)
+        .set({ ...data })
+        .where(eq(exercise.id, id))
+        .returning();
     },
   };
 };
