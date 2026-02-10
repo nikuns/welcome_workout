@@ -29,7 +29,7 @@ export default function newExercise() {
     }
   };
   return (
-    <ScrollView className="bg-background flex-1">
+    <ScrollView className="bg-background flex-1" keyboardDismissMode="on-drag">
       <TextInput
         className="bg-background text-4xl text-secondary"
         placeholder="name"

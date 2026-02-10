@@ -24,7 +24,8 @@ function ExerciseItem({ exercise }: ExerciseItemProps) {
     </View>
   );
 }
-
+// TODO
+// zmien new exercise na modal
 export default function Index() {
   const { exercises } = useExercises();
 
