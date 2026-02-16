@@ -1,6 +1,6 @@
 import * as SQLite from "expo-sqlite";
 import { drizzle } from "drizzle-orm/expo-sqlite";
-import { exercise, workout_template } from "./schema";
+import { exercise, workout_template, workoutExercise } from "./schema";
 
 //const db = drizzle(SQLite.openDatabaseAsync("WWdb.db"));
 
@@ -8,6 +8,26 @@ export const seedExercise = async (dbName: string) => {
   const db = drizzle(SQLite.openDatabaseSync(dbName));
 
   try {
+    /*await db.insert(workoutExercise).values([
+      {
+        workoutTemplateId: 8,
+        exerciseId: 1,
+        position: 1,
+        notes: "pierwsze cwiczenie",
+      },
+      {
+        workoutTemplateId: 8,
+        exerciseId: 2,
+        position: 2,
+        notes: "drugie cwiczenie",
+      },
+      {
+        workoutTemplateId: 8,
+        exerciseId: 3,
+        position: 3,
+      },
+    ]);
+*/
     const existingSeed = await db.select().from(exercise);
 
     if (existingSeed.length > 0) {

@@ -10,7 +10,7 @@ export default function useWorkouts() {
 
   return {
     workouts,
-
+    useExercisesInWorkout: repo.useExercisesInWorkout,
     useWorkoutById: repo.useWorkoutById,
     createWorkout: repo.createWorkout,
     deleteWorkout: repo.deleteWorkout,

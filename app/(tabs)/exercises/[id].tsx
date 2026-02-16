@@ -6,7 +6,7 @@ export default function ExerciseDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const { useExerciseById, deleteExercise, updateExercise } = useExercises();
 
-  const handleDelete = () => {
+  const handleDelete = (): void => {
     try {
       deleteExercise(Number(id));
       router.back();
@@ -16,7 +16,7 @@ export default function ExerciseDetail() {
     }
   };
 
-  const deleteAlert = () => {
+  const deleteAlert = (): void => {
     Alert.alert("Are you sure?", "", [
       {
         text: "yes",
@@ -27,7 +27,8 @@ export default function ExerciseDetail() {
       },
     ]);
   };
-
+  // TODO
+  // make updates working
   const handleUpdate = () => {
     updateExercise(Number(id), {
       name: "updated",
@@ -38,7 +39,12 @@ export default function ExerciseDetail() {
   if (!exercise) {
     return null;
   }
-  if (error) return <Text>{error.message}</Text>;
+  if (error)
+    return (
+      <Text className="text-3xl text-secondary justify-center">
+        {error.message}
+      </Text>
+    );
   return (
     <View className="bg-background flex-1">
       <Text className="text-3xl text-secondary">{exercise.name}</Text>

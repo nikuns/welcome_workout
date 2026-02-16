@@ -1,16 +1,11 @@
-import { Many, relations } from "drizzle-orm";
-import {
-  sqliteTable,
-  text,
-  integer,
-  SQLiteTable,
-} from "drizzle-orm/sqlite-core";
+import { relations } from "drizzle-orm";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 // TABLES
 export const exercise = sqliteTable("exercise", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   name: text("name").notNull(),
-  description: text("description"),
+  description: text("description").notNull(),
 });
 
 export const workoutTemplate = sqliteTable("workout_template", {
@@ -19,7 +14,7 @@ export const workoutTemplate = sqliteTable("workout_template", {
   description: text("description"),
 });
 
-export const workoutExercise = sqliteTable("workoutExercise", {
+export const workoutExercise = sqliteTable("workout_exercise", {
   id: integer("id").primaryKey({ autoIncrement: true }),
   workoutTemplateId: integer("workout_template_id")
     .notNull()

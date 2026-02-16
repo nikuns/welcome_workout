@@ -1,18 +1,18 @@
-import { View, Text, FlatList, Button, Alert, Pressable } from "react-native";
-import React from "react";
-import { Link } from "expo-router";
-import { Workout, workout_template } from "@/db/schema";
+import { workoutTemplate } from "@/db/schema";
 import useWorkouts from "@/hooks/useWorkout";
+import { Link } from "expo-router";
+import React from "react";
+import { Alert, Button, FlatList, Pressable, Text, View } from "react-native";
 
 type WorkoutItemProps = {
-  workout_template: typeof workout_template.$inferSelect;
+  workout_template: typeof workoutTemplate.$inferSelect;
 };
 
 function WorkoutItem({ workout_template }: WorkoutItemProps) {
   return (
     <View>
       <Text className="text-3xl font-bold text-secondary">
-        {workout_template.name}
+        {workout_template.id}. {workout_template.name}
       </Text>
       <Text className="text-secondary">{workout_template.description}</Text>
     </View>
@@ -50,9 +50,11 @@ export default function Index() {
         data={workouts}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
-          <Pressable onPress={() => handleDelete(item.id)}>
-            <WorkoutItem workout_template={item} />
-          </Pressable>
+          <Link href={`/workouts/${item.id}`} asChild>
+            <Pressable>
+              <WorkoutItem workout_template={item} />
+            </Pressable>
+          </Link>
         )}
       />
       <Button title="New workout" onPress={handleNewWorkout} />

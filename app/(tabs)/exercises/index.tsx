@@ -1,16 +1,9 @@
-import { exercise } from "@/db/schema";
-import { useState } from "react";
-import {
-  Button,
-  FlatList,
-  Pressable,
-  Text,
-  TextInput,
-  View,
-} from "react-native";
 import SearchBar from "@/components/SearchBar";
+import { exercise } from "@/db/schema";
 import useExercises from "@/hooks/useExercise";
 import { Link } from "expo-router";
+import { useState } from "react";
+import { Button, FlatList, Pressable, Text, View } from "react-native";
 
 type ExerciseItemProps = {
   exercise: typeof exercise.$inferSelect;
@@ -19,7 +12,9 @@ type ExerciseItemProps = {
 function ExerciseItem({ exercise }: ExerciseItemProps) {
   return (
     <View>
-      <Text className="text-3xl font-bold text-secondary">{exercise.name}</Text>
+      <Text className="text-3xl font-bold text-secondary">
+        {exercise.id}. {exercise.name}
+      </Text>
       <Text className="text-secondary">{exercise.description}</Text>
     </View>
   );

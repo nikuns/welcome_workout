@@ -29,14 +29,11 @@ export const createWorkoutRepository = (db: DB) => {
       return useLiveQuery(
         db
           .select({
-            // pola z workout_exercise
             weId: workoutExercise.id,
             position: workoutExercise.position,
             notes: workoutExercise.notes,
-            // pola z exercise
             exerciseId: exercise.id,
             exerciseName: exercise.name,
-            exerciseDescription: exercise.description,
           })
           .from(workoutExercise)
           .innerJoin(exercise, eq(workoutExercise.exerciseId, exercise.id))
