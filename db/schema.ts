@@ -66,3 +66,11 @@ export const schema = {
   workoutTemplate,
   workoutExercise,
 } as const;
+
+export type WorkoutExerciseListItem = {
+  weId: number;
+  position: number;
+  notes: string | null;
+  exerciseId: number;
+  exerciseName: string;
+};

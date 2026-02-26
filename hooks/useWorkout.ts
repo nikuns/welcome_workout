@@ -14,5 +14,6 @@ export default function useWorkouts() {
     useWorkoutById: repo.useWorkoutById,
     createWorkout: repo.createWorkout,
     deleteWorkout: repo.deleteWorkout,
+    addExerciseToWorkout: repo.addExerciseToWorkout,
   };
 }

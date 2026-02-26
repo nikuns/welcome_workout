@@ -18,7 +18,7 @@ export default function newExercise() {
     try {
       await createExercise({
         name: name.trim(),
-        description: description.trim() || null,
+        description: description.trim(),
       });
 
       Alert.alert("udalo sie");

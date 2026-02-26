@@ -1,26 +1,10 @@
+import ExerciseItem from "@/components/ExerciseItem";
 import SearchBar from "@/components/SearchBar";
-import { exercise } from "@/db/schema";
 import useExercises from "@/hooks/useExercise";
 import { Link } from "expo-router";
-import { useState } from "react";
-import { Button, FlatList, Pressable, Text, View } from "react-native";
+import React, { useState } from "react";
+import { Button, FlatList, Pressable, View } from "react-native";
 
-type ExerciseItemProps = {
-  exercise: typeof exercise.$inferSelect;
-};
-
-function ExerciseItem({ exercise }: ExerciseItemProps) {
-  return (
-    <View>
-      <Text className="text-3xl font-bold text-secondary">
-        {exercise.id}. {exercise.name}
-      </Text>
-      <Text className="text-secondary">{exercise.description}</Text>
-    </View>
-  );
-}
-// TODO
-// zmien new exercise na modal
 export default function Index() {
   const { exercises } = useExercises();
 

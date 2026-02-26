@@ -3,9 +3,11 @@ import { ExpoSQLiteDatabase, useLiveQuery } from "drizzle-orm/expo-sqlite";
 import {
   exercise,
   newWorkout,
+  newWorkoutExercise,
   Workout,
   workoutExercise,
   WorkoutExercise,
+  WorkoutExerciseListItem,
   workoutTemplate,
 } from "./schema";
 
@@ -26,7 +28,7 @@ export const createWorkoutRepository = (db: DB) => {
     },
 
     useExercisesInWorkout(workoutId: number) {
-      return useLiveQuery(
+      return useLiveQuery<WorkoutExerciseListItem[]>(
         db
           .select({
             weId: workoutExercise.id,
@@ -55,7 +57,7 @@ export const createWorkoutRepository = (db: DB) => {
     },
 
     async addExerciseToWorkout(
-      data: WorkoutExercise,
+      data: newWorkoutExercise,
     ): Promise<WorkoutExercise> {
       const [inserted] = await db
         .insert(workoutExercise)
