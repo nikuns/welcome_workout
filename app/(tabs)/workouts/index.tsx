@@ -1,8 +1,16 @@
 import { workoutTemplate } from "@/db/schema";
 import useWorkouts from "@/hooks/useWorkout";
 import { Link } from "expo-router";
-import React from "react";
-import { Alert, Button, FlatList, Pressable, Text, View } from "react-native";
+import React, { useState } from "react";
+import {
+  Alert,
+  Button,
+  FlatList,
+  Modal,
+  Pressable,
+  Text,
+  View,
+} from "react-native";
 
 type WorkoutItemProps = {
   workout_template: typeof workoutTemplate.$inferSelect;
@@ -22,6 +30,14 @@ function WorkoutItem({ workout_template }: WorkoutItemProps) {
 export default function Index() {
   const { workouts, createWorkout, deleteWorkout } = useWorkouts();
 
+  const [selected, setselected] = useState();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const openOptionsModal = (id: number): void => {
+    setselected(id);
+    setIsModalVisible(true);
+  };
+
   const handleNewWorkout = async () => {
     try {
       await createWorkout({
@@ -37,6 +53,7 @@ export default function Index() {
   const handleDelete = async (id: number) => {
     try {
       await deleteWorkout(id);
+      setIsModalVisible(false);
       Alert.alert("Workout has been deleted");
     } catch (e) {
       console.error(e);
@@ -51,13 +68,25 @@ export default function Index() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <Link href={`/workouts/${item.id}`} asChild>
-            <Pressable>
+            <Pressable onLongPress={() => openOptionsModal(item.id)}>
               <WorkoutItem workout_template={item} />
             </Pressable>
           </Link>
         )}
       />
       <Button title="New workout" onPress={handleNewWorkout} />
+      <Modal visible={isModalVisible}>
+        <View
+          className="items-center justify-center px-3 bg-slate-950 w-full rounded-xl
+          flex-auto"
+        >
+          <Button
+            title="Delete workout"
+            onPress={() => handleDelete(selected)}
+          />
+          <Button title="Cancel" onPress={() => setIsModalVisible(false)} />
+        </View>
+      </Modal>
     </View>
   );
 }

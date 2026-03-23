@@ -56,6 +56,10 @@ export const createWorkoutRepository = (db: DB) => {
       await db.delete(workoutTemplate).where(eq(workoutTemplate.id, id));
     },
 
+    async deleteExerciseFromWorkout(id: number): Promise<void> {
+      await db.delete(workoutExercise).where(eq(workoutExercise.id, id));
+    },
+
     async addExerciseToWorkout(
       data: newWorkoutExercise,
     ): Promise<WorkoutExercise> {

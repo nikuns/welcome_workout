@@ -19,7 +19,7 @@ type ExerciseListModalProps = {
 };
 
 // TODO
-// Popraw ten modal, zeby stan mogl byc kontrolowany z zewntrz
+// Popraw ten modal, zeby stan mogl byc kontrolowany z zewnatrz
 export default function ExerciseListModal({
   id,
   workoutExercises,
