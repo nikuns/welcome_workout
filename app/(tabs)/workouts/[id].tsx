@@ -46,9 +46,11 @@ export default function workoutDetail() {
         data={workoutExercises}
         keyExtractor={(item) => item.weId.toString()}
         renderItem={({ item }) => (
-          <Pressable onPress={() => openOptionsModal(item.weId)}>
-            <WorkoutExerciseItem workoutExercise={item} />
-          </Pressable>
+          <WorkoutExerciseItem
+            showMenu={true}
+            onMenuPress={() => openOptionsModal(item.weId)}
+            workoutExercise={item}
+          />
         )}
       />
       <Modal visible={isModalVisible}>

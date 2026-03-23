@@ -41,8 +41,8 @@ export default function Index() {
   const handleNewWorkout = async () => {
     try {
       await createWorkout({
-        name: "test new workout",
-        description: "test new workout from button",
+        name: "New workout",
+        description: "New workout description",
       });
       Alert.alert("New workout created");
     } catch (e) {
