@@ -1,4 +1,5 @@
-import { relations } from "drizzle-orm";
+import { Many, relations } from "drizzle-orm";
+import { float } from "drizzle-orm/mysql-core";
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 // TABLES
@@ -26,6 +27,20 @@ export const workoutExercise = sqliteTable("workout_exercise", {
   notes: text("notes"),
 });
 
+export const workoutExerciseSetTarget = sqliteTable(
+  "workout_exercise_set_target",
+  {
+    id: integer("id").primaryKey({ autoIncrement: true }),
+    workoutExerciseId: integer("workout_exercise_id")
+      .notNull()
+      .references(() => workoutExercise.id),
+    setNumber: integer("set_number").notNull(),
+    targetReps: integer("target_set"),
+    targetWeight: float("target_weight"),
+    setType: text("set_type").notNull(),
+  },
+);
+
 // RELATIONS
 
 export const exercisesRelations = relations(exercise, ({ many }) => ({
@@ -50,6 +65,13 @@ export const workoutExercisesRelations = relations(
   }),
 );
 
+export const WorkoutExerciseSetTargetRelations = relations(
+  workoutExercise,
+  ({ many }) => ({
+    WorkoutExerciseSetTarget: many(workoutExerciseSetTarget),
+  }),
+);
+
 // TYPES
 
 export type Exercise = typeof exercise.$inferSelect;
@@ -61,10 +83,16 @@ export type newWorkout = typeof workoutTemplate.$inferInsert;
 export type WorkoutExercise = typeof workoutExercise.$inferSelect;
 export type newWorkoutExercise = typeof workoutExercise.$inferInsert;
 
+export type WorkoutExerciseSetTarget =
+  typeof workoutExerciseSetTarget.$inferSelect;
+export type newWorkoutExerciseSetTarget =
+  typeof workoutExerciseSetTarget.$inferInsert;
+
 export const schema = {
   exercise,
   workoutTemplate,
   workoutExercise,
+  workoutExerciseSetTarget,
 } as const;
 
 export type WorkoutExerciseListItem = {

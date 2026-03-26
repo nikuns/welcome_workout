@@ -15,6 +15,13 @@
       "when": 1770551530077,
       "tag": "0001_omniscient_darwin",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1774560918861,
+      "tag": "0002_needy_owl",
+      "breakpoints": true
     }
   ]
 }
