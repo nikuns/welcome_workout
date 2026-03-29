@@ -1,14 +1,25 @@
 import ExerciseListModal from "@/components/ExerciseListModal";
 import WorkoutExerciseItem from "@/components/WorkoutExerciseItem";
+import {
+  workoutExerciseSetTarget,
+  WorkoutExerciseSetTarget,
+} from "@/db/schema";
 import useWorkouts from "@/hooks/useWorkout";
+import { index } from "drizzle-orm/gel-core";
 import { useLocalSearchParams } from "expo-router";
 import React, { useState } from "react";
 import { Button, FlatList, Modal, Pressable, Text, View } from "react-native";
 
 export default function workoutDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { useExercisesInWorkout, deleteExerciseFromWorkout } = useWorkouts();
-  const { data: workoutExercises, error } = useExercisesInWorkout(Number(id));
+  const {
+    addSetToWorkoutExercise,
+    useExercisesInWorkoutWithSets,
+    deleteExerciseFromWorkout,
+  } = useWorkouts();
+  const { data: workoutExercises, error } = useExercisesInWorkoutWithSets(
+    Number(id),
+  );
 
   const [selected, setselected] = useState();
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -24,6 +35,28 @@ export default function workoutDetail() {
       setIsModalVisible(false);
     } catch (e) {
       console.error(e);
+    }
+  };
+
+  const handleAddSet = async (weId: number): Promise<void> => {
+    try {
+      const setsForThisExercise = workoutExercises.filter(
+        (item) => item.weId === weId && item.setNumber !== null,
+      );
+
+      const nextSetNumber = setsForThisExercise.length + 1;
+
+      await addSetToWorkoutExercise({
+        workoutExerciseId: weId,
+        setNumber: nextSetNumber,
+        targetReps: 5,
+        targetWeight: 60,
+        setType: "W",
+      });
+
+      setIsModalVisible(false);
+    } catch (e) {
+      console.error("Błąd dodawania serii:", e);
     }
   };
 
@@ -44,7 +77,9 @@ export default function workoutDetail() {
       <FlatList
         className="bg-background"
         data={workoutExercises}
-        keyExtractor={(item) => item.weId.toString()}
+        keyExtractor={(item, index) =>
+          `${item.weId}-${item.setNumber ?? "no-set"}-${index}`
+        }
         renderItem={({ item }) => (
           <WorkoutExerciseItem
             showMenu={true}
@@ -62,6 +97,7 @@ export default function workoutDetail() {
             title="Delete exercise from workout"
             onPress={() => handleDelete(selected)}
           />
+          <Button title="add set" onPress={() => handleAddSet(selected)} />
           <Button title="Cancel" onPress={() => setIsModalVisible(false)} />
         </View>
       </Modal>

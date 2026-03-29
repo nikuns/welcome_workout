@@ -8,6 +8,8 @@ import {
   workoutExercise,
   WorkoutExercise,
   WorkoutExerciseListItem,
+  WorkoutExerciseSetTarget,
+  workoutExerciseSetTarget,
   workoutTemplate,
 } from "./schema";
 
@@ -44,6 +46,30 @@ export const createWorkoutRepository = (db: DB) => {
       );
     },
 
+    useExercisesInWorkoutWithSets(workoutId: number) {
+      return useLiveQuery<WorkoutExerciseListItem[]>(
+        db
+          .select({
+            weId: workoutExercise.id,
+            position: workoutExercise.position,
+            notes: workoutExercise.notes,
+            exerciseId: exercise.id,
+            exerciseName: exercise.name,
+            setNumber: workoutExerciseSetTarget.setNumber,
+            targetReps: workoutExerciseSetTarget.targetReps,
+            targetWeight: workoutExerciseSetTarget.targetWeight,
+          })
+          .from(workoutExercise)
+          .innerJoin(exercise, eq(workoutExercise.exerciseId, exercise.id))
+          .leftJoin(
+            workoutExerciseSetTarget,
+            eq(workoutExerciseSetTarget.workoutExerciseId, workoutExercise.id),
+          )
+          .where(eq(workoutExercise.workoutTemplateId, workoutId))
+          .orderBy(workoutExercise.position),
+      );
+    },
+
     async createWorkout(data: newWorkout): Promise<Workout> {
       const [inserted] = await db
         .insert(workoutTemplate)
@@ -65,6 +91,16 @@ export const createWorkoutRepository = (db: DB) => {
     ): Promise<WorkoutExercise> {
       const [inserted] = await db
         .insert(workoutExercise)
+        .values({ ...data })
+        .returning();
+      return inserted;
+    },
+
+    async addSetToWorkoutExecise(
+      data: newWorkoutExerciseSetTarget,
+    ): Promise<WorkoutExerciseSetTarget> {
+      const [inserted] = await db
+        .insert(workoutExerciseSetTarget)
         .values({ ...data })
         .returning();
       return inserted;

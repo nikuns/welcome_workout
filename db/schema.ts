@@ -37,7 +37,7 @@ export const workoutExerciseSetTarget = sqliteTable(
     setNumber: integer("set_number").notNull(),
     targetReps: integer("target_set"),
     targetWeight: float("target_weight"),
-    setType: text("set_type").notNull(),
+    setType: text("set_type"),
   },
 );
 
@@ -101,4 +101,8 @@ export type WorkoutExerciseListItem = {
   notes: string | null;
   exerciseId: number;
   exerciseName: string;
+  // Sets fields
+  setNumber: number | null;
+  targetReps: number | null;
+  targetWeight: number | null;
 };

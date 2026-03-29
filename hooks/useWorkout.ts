@@ -11,10 +11,12 @@ export default function useWorkouts() {
   return {
     workouts,
     useExercisesInWorkout: repo.useExercisesInWorkout,
+    useExercisesInWorkoutWithSets: repo.useExercisesInWorkoutWithSets,
     useWorkoutById: repo.useWorkoutById,
     createWorkout: repo.createWorkout,
     deleteWorkout: repo.deleteWorkout,
     deleteExerciseFromWorkout: repo.deleteExerciseFromWorkout,
     addExerciseToWorkout: repo.addExerciseToWorkout,
+    addSetToWorkoutExercise: repo.addSetToWorkoutExecise,
   };
 }
