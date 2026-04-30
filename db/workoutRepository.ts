@@ -1,9 +1,10 @@
-import { eq } from "drizzle-orm";
+import { count, eq, sql } from "drizzle-orm";
 import { ExpoSQLiteDatabase, useLiveQuery } from "drizzle-orm/expo-sqlite";
 import {
   exercise,
   newWorkout,
   newWorkoutExercise,
+  newWorkoutExerciseSetTarget,
   Workout,
   workoutExercise,
   WorkoutExercise,
@@ -68,6 +69,33 @@ export const createWorkoutRepository = (db: DB) => {
           .where(eq(workoutExercise.workoutTemplateId, workoutId))
           .orderBy(workoutExercise.position),
       );
+    },
+
+    useSetsForWorkout(workoutId: number) {
+      return useLiveQuery(
+        db
+          .select({
+            weId: workoutExerciseSetTarget.workoutExerciseId,
+            setNumber: workoutExerciseSetTarget.setNumber,
+            targetReps: workoutExerciseSetTarget.targetReps,
+            targetWeight: workoutExerciseSetTarget.targetWeight,
+          })
+          .from(workoutExerciseSetTarget)
+          .innerJoin(
+            workoutExercise,
+            eq(workoutExercise.id, workoutExerciseSetTarget.workoutExerciseId),
+          )
+          .where(eq(workoutExercise.workoutTemplateId, workoutId)),
+      );
+    },
+
+    // Used for counting number of sets in workout exercise
+    async countSetsInWorkoutExercise(WeId: number): Promise<number> {
+      const result = await db
+        .select({ count: sql<number>`count(*)` })
+        .from(workoutExerciseSetTarget)
+        .where(eq(workoutExerciseSetTarget.workoutExerciseId, WeId));
+      return result[0]?.count ?? 0;
     },
 
     async createWorkout(data: newWorkout): Promise<Workout> {

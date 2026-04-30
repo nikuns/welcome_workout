@@ -1,50 +1,79 @@
 import ExerciseListModal from "@/components/ExerciseListModal";
 import WorkoutExerciseItem from "@/components/WorkoutExerciseItem";
-import {
-  workoutExerciseSetTarget,
-  WorkoutExerciseSetTarget,
-} from "@/db/schema";
 import useWorkouts from "@/hooks/useWorkout";
-import { index } from "drizzle-orm/gel-core";
 import { useLocalSearchParams } from "expo-router";
-import React, { useState } from "react";
-import { Button, FlatList, Modal, Pressable, Text, View } from "react-native";
+import React, { useMemo, useState } from "react";
+import { Alert, Button, FlatList, Modal, Text, View } from "react-native";
 
 export default function workoutDetail() {
   const { id } = useLocalSearchParams<{ id: string }>();
+  const workoutId = Number(id);
+
   const {
     addSetToWorkoutExercise,
-    useExercisesInWorkoutWithSets,
+    useExercisesInWorkout,
+    useSetsForWorkout,
     deleteExerciseFromWorkout,
+    countSetsInWorkoutExercise,
   } = useWorkouts();
-  const { data: workoutExercises, error } = useExercisesInWorkoutWithSets(
-    Number(id),
-  );
 
-  const [selected, setselected] = useState();
+  const exercisesQuery = useExercisesInWorkout(workoutId);
+  const setsQuery = useSetsForWorkout(workoutId);
+
+  const exercises = exercisesQuery.data ?? [];
+  const sets = setsQuery.data ?? [];
+  const error = exercisesQuery.error ?? setsQuery.error;
+
+  const [selectedWeId, setSelectedWeId] = useState<number | null>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const openOptionsModal = (id: number): void => {
-    setselected(id);
+  const groupedExercises = useMemo(() => {
+    const setsMap = new Map<number, typeof sets>();
+
+    sets.forEach((set) => {
+      if (!setsMap.has(set.weId)) {
+        setsMap.set(set.weId, []);
+      }
+      setsMap.get(set.weId)!.push(set);
+    });
+
+    return exercises.map((exercise) => {
+      const setsForExercise = setsMap.get(exercise.weId) || [];
+
+      return setsForExercise.length > 0
+        ? setsForExercise
+            .sort((a, b) => a.setNumber - b.setNumber)
+            .map((set) => ({
+              ...exercise,
+              ...set,
+            }))
+        : [
+            {
+              ...exercise,
+              setNumber: null,
+              targetReps: null,
+              targetWeight: null,
+            },
+          ];
+    });
+  }, [exercises, sets]);
+
+  const openOptionsModal = (weId: number) => {
+    setSelectedWeId(weId);
     setIsModalVisible(true);
   };
 
-  const handleDelete = async (id: number): Promise<void> => {
+  const handleDelete = async (weId: number) => {
     try {
-      await deleteExerciseFromWorkout(id);
+      await deleteExerciseFromWorkout(weId);
       setIsModalVisible(false);
     } catch (e) {
       console.error(e);
     }
   };
-
   const handleAddSet = async (weId: number): Promise<void> => {
     try {
-      const setsForThisExercise = workoutExercises.filter(
-        (item) => item.weId === weId && item.setNumber !== null,
-      );
-
-      const nextSetNumber = setsForThisExercise.length + 1;
+      const nextSetNumber = (await countSetsInWorkoutExercise(weId)) + 1;
 
       await addSetToWorkoutExercise({
         workoutExerciseId: weId,
@@ -53,55 +82,58 @@ export default function workoutDetail() {
         targetWeight: 60,
         setType: "W",
       });
-
+      Alert.alert("dodano set");
       setIsModalVisible(false);
     } catch (e) {
       console.error("Błąd dodawania serii:", e);
     }
   };
 
-  if (!workoutExercises) {
-    return null;
-  }
-  if (error)
+  if (error) {
     return (
-      <View className="bg-background flex-1">
-        <Text className="text-xl text-secondary justify-center">
-          {error.message}
-        </Text>
+      <View className="bg-background flex-1 justify-center items-center">
+        <Text className="text-red-500">Błąd: {error.message}</Text>
       </View>
     );
+  }
 
   return (
     <View className="bg-background flex-1">
       <FlatList
-        className="bg-background"
-        data={workoutExercises}
-        keyExtractor={(item, index) =>
-          `${item.weId}-${item.setNumber ?? "no-set"}-${index}`
-        }
-        renderItem={({ item }) => (
+        data={groupedExercises}
+        keyExtractor={(group) => group[0].weId.toString()} // teraz bezpiecznie
+        renderItem={({ item: setsGroup }) => (
           <WorkoutExerciseItem
+            workoutExercise={setsGroup[0]} // pierwszy element jako reprezentant
+            allSets={setsGroup} // wszystkie sety tego ćwiczenia
             showMenu={true}
-            onMenuPress={() => openOptionsModal(item.weId)}
-            workoutExercise={item}
+            onMenuPress={() => openOptionsModal(setsGroup[0].weId)}
           />
         )}
+        ListEmptyComponent={
+          <Text className="text-center text-zinc-400 mt-10">
+            Brak ćwiczeń w tym treningu
+          </Text>
+        }
       />
-      <Modal visible={isModalVisible}>
-        <View
-          className="items-center justify-center px-3 bg-slate-950 w-full rounded-xl
-          flex-auto"
-        >
-          <Button
-            title="Delete exercise from workout"
-            onPress={() => handleDelete(selected)}
-          />
-          <Button title="add set" onPress={() => handleAddSet(selected)} />
-          <Button title="Cancel" onPress={() => setIsModalVisible(false)} />
+
+      <Modal visible={isModalVisible} transparent animationType="slide">
+        <View className="flex-1 justify-center items-center bg-black/70">
+          <View className="bg-zinc-900 p-6 rounded-2xl w-11/12">
+            <Button
+              title="Delete exercise from workout"
+              onPress={() => selectedWeId && handleDelete(selectedWeId)}
+            />
+            <Button
+              title="Add set"
+              onPress={() => selectedWeId && handleAddSet(selectedWeId)}
+            />
+            <Button title="Cancel" onPress={() => setIsModalVisible(false)} />
+          </View>
         </View>
       </Modal>
-      <ExerciseListModal id={id} workoutExercises={workoutExercises} />
+
+      <ExerciseListModal id={id} workoutExercises={exercises} />
     </View>
   );
 }

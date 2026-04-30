@@ -10,6 +10,8 @@ export default function useWorkouts() {
 
   return {
     workouts,
+    useSetsForWorkout: repo.useSetsForWorkout,
+    countSetsInWorkoutExercise: repo.countSetsInWorkoutExercise, // set number count
     useExercisesInWorkout: repo.useExercisesInWorkout,
     useExercisesInWorkoutWithSets: repo.useExercisesInWorkoutWithSets,
     useWorkoutById: repo.useWorkoutById,
